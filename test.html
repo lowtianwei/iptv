@@ -1,0 +1,130 @@
+<script>
+  var licenseUrl;
+  var serverCertificate;
+
+  // Returns a Promise<MediaKeys>.
+  function createSupportedKeySystem() {
+    someSystemOptions = [
+     { initDataTypes: ['keyids', 'webm'],
+       audioCapabilities: [
+         { contentType: 'audio/webm; codecs="opus"' },
+         { contentType: 'audio/webm; codecs="vorbis"' }
+       ],
+       videoCapabilities: [
+         { contentType: 'video/webm; codecs="vp9"' },
+         { contentType: 'video/webm; codecs="vp8"' }
+       ]
+     }
+    ];
+    clearKeyOptions = [
+     { initDataTypes: ['keyids', 'webm'],
+       audioCapabilities: [
+         { contentType: 'audio/webm; codecs="opus"' },
+         { contentType: 'audio/webm; codecs="vorbis"' }
+       ],
+       videoCapabilities: [
+         { contentType: 'video/webm; codecs="vp9"',
+           robustness: 'foo' },
+         { contentType: 'video/webm; codecs="vp9"',
+           robustness: 'bar' },
+         { contentType: 'video/webm; codecs="vp8"',
+           robustness: 'bar' },
+       ]
+     }
+    ];
+
+    return navigator.requestMediaKeySystemAccess('com.example.somesystem', someSystemOptions).then(
+      function(keySystemAccess) {
+        // Not shown:
+        // 1. Use both attributes of keySystemAccess.getConfiguration().audioCapabilities[0]
+        //    and both attributes of keySystemAccess.getConfiguration().videoCapabilities[0]
+        //    to retrieve appropriate stream(s).
+        // 2. Set video.src.
+
+        licenseUrl = 'https://udrmv3.kaltura.com/cenc/widevine/license?custom_data=eyJjYV9zeXN0ZW0iOiJodHRwczovL3Jlc3QtYXMub3R0LmthbHR1cmEuY29tL2FwaV92My9zZXJ2aWNlL2Fzc2V0RmlsZS9hY3Rpb24vZ2V0Q29udGV4dD9rcz1kako4TVRRM2ZEbnhneTUzanhIakIwRWpWT3JEeEZ1bWlETjBWVFhLRzl1al9DVjJKdnRhTWt0ZEZSLTdRX01ySXBfUGR3R3g3U2p0TTAwam1Ua0dGSFF2TEhtV2ptYjZ6Y1hLeXhmN0E2ejE4X1EydzdzX2hENGQ3N044bWg4UFdFZXVSX3hZRHdQOEgxNVlvZXhNZmVZMVdfd0hYX3IyWHVTRkJ2UTZ3Y2dsUG11NW9PU0ludmE5eUxSWG15d2Q0M0VSMlltb3QtVGpld1FkT0V2VzVFeUVHS0VIUVpja3Ztd3dVQ3NQYkFlbWtqOHNhWXFFU3hkUkhZX0Z2c3JuQTFKWW1uZjRsZHRRNUxfRHBOM0llZ2FoOGxwX3lsOEMtUHFqT1RIdUNMNHBNTW5FQU9kRnR5bDZnWjdMRF92WGhmYzF2LVRtaFRSN3hBbUpZVFowYjRua0ZtVzVMSms9JmNvbnRleHRUeXBlPW5vbmUmaWQ9OTgyNjk5MSIsImFjY291bnRfaWQiOjIwODIzMTEsImNvbnRlbnRfaWQiOiJmdGFfY2g4X2Rhc2hfMjAwNDVjNDNlOWU5X2Ntbl8yIiwiZmlsZXMiOiIiLCJ1c2VyX3Rva2VuIjoiZGpKOE1UUTNmRG54Z3k1M2p4SGpCMEVqVk9yRHhGdW1pRE4wVlRYS0c5dWpfQ1YySnZ0YU1rdGRGUi03UV9NcklwX1Bkd0d4N1NqdE0wMGptVGtHRkhRdkxIbVdqbWI2emNYS3l4ZjdBNnoxOF9RMnc3c19oRDRkNzdOOG1oOFBXRWV1Ul94WUR3UDhIMTVZb2V4TWZlWTFXX3dIWF9yMlh1U0ZCdlE2d2NnbFBtdTVvT1NJbnZhOXlMUlhteXdkNDNFUjJZbW90LVRqZXdRZE9Fdlc1RXlFR0tFSFFaY2t2bXd3VUNzUGJBZW1rajhzYVlxRVN4ZFJIWV9GdnNybkExSlltbmY0bGR0UTVMX0RwTjNJZWdhaDhscF95bDhDLVBxak9USHVDTDRwTU1uRUFPZEZ0eWw2Z1o3TERfdlhoZmMxdi1UbWhUUjd4QW1KWVRaMGI0bmtGbVc1TEprPSIsInVkaWQiOiIiLCJhZGRpdGlvbmFsX2Nhc19zeXN0ZW0iOjE0N30%3d&signature=MHYkO9fJy7uBxqKAsQfYj3KN9Sk%3d';
+        serverCertificate = new Uint8Array([ ... ]);
+        return keySystemAccess.createMediaKeys();
+      }
+    ).catch(
+      function(error) {
+        // Try the next key system.
+        navigator.requestMediaKeySystemAccess('org.w3.clearkey', clearKeyOptions).then(
+          function(keySystemAccess) {
+            // Not shown:
+            // 1. Use keySystemAccess.getConfiguration().audioCapabilities[0].contentType
+            //    and keySystemAccess.getConfiguration().videoCapabilities[0].contentType
+            //    to retrieve appropriate stream(s).
+            // 2. Set video.src.
+
+            licenseUrl = 'https://udrmv3.kaltura.com/cenc/widevine/license?custom_data=eyJjYV9zeXN0ZW0iOiJodHRwczovL3Jlc3QtYXMub3R0LmthbHR1cmEuY29tL2FwaV92My9zZXJ2aWNlL2Fzc2V0RmlsZS9hY3Rpb24vZ2V0Q29udGV4dD9rcz1kako4TVRRM2ZEbnhneTUzanhIakIwRWpWT3JEeEZ1bWlETjBWVFhLRzl1al9DVjJKdnRhTWt0ZEZSLTdRX01ySXBfUGR3R3g3U2p0TTAwam1Ua0dGSFF2TEhtV2ptYjZ6Y1hLeXhmN0E2ejE4X1EydzdzX2hENGQ3N044bWg4UFdFZXVSX3hZRHdQOEgxNVlvZXhNZmVZMVdfd0hYX3IyWHVTRkJ2UTZ3Y2dsUG11NW9PU0ludmE5eUxSWG15d2Q0M0VSMlltb3QtVGpld1FkT0V2VzVFeUVHS0VIUVpja3Ztd3dVQ3NQYkFlbWtqOHNhWXFFU3hkUkhZX0Z2c3JuQTFKWW1uZjRsZHRRNUxfRHBOM0llZ2FoOGxwX3lsOEMtUHFqT1RIdUNMNHBNTW5FQU9kRnR5bDZnWjdMRF92WGhmYzF2LVRtaFRSN3hBbUpZVFowYjRua0ZtVzVMSms9JmNvbnRleHRUeXBlPW5vbmUmaWQ9OTgyNjk5MSIsImFjY291bnRfaWQiOjIwODIzMTEsImNvbnRlbnRfaWQiOiJmdGFfY2g4X2Rhc2hfMjAwNDVjNDNlOWU5X2Ntbl8yIiwiZmlsZXMiOiIiLCJ1c2VyX3Rva2VuIjoiZGpKOE1UUTNmRG54Z3k1M2p4SGpCMEVqVk9yRHhGdW1pRE4wVlRYS0c5dWpfQ1YySnZ0YU1rdGRGUi03UV9NcklwX1Bkd0d4N1NqdE0wMGptVGtHRkhRdkxIbVdqbWI2emNYS3l4ZjdBNnoxOF9RMnc3c19oRDRkNzdOOG1oOFBXRWV1Ul94WUR3UDhIMTVZb2V4TWZlWTFXX3dIWF9yMlh1U0ZCdlE2d2NnbFBtdTVvT1NJbnZhOXlMUlhteXdkNDNFUjJZbW90LVRqZXdRZE9Fdlc1RXlFR0tFSFFaY2t2bXd3VUNzUGJBZW1rajhzYVlxRVN4ZFJIWV9GdnNybkExSlltbmY0bGR0UTVMX0RwTjNJZWdhaDhscF95bDhDLVBxak9USHVDTDRwTU1uRUFPZEZ0eWw2Z1o3TERfdlhoZmMxdi1UbWhUUjd4QW1KWVRaMGI0bmtGbVc1TEprPSIsInVkaWQiOiIiLCJhZGRpdGlvbmFsX2Nhc19zeXN0ZW0iOjE0N30%3d&signature=MHYkO9fJy7uBxqKAsQfYj3KN9Sk%3d';
+            return keySystemAccess.createMediaKeys();
+          }
+        );
+      }
+    ).catch(
+      console.error.bind(console, 'Unable to instantiate a key system supporting the required combinations')
+    );
+  }
+
+  function handleInitData(event) {
+    var video = event.target;
+    if (video.mediaKeysObject === undefined) {
+      video.mediaKeysObject = null; // Prevent entering this path again.
+      video.pendingSessionData = []; // Will store all initData until the MediaKeys is ready.
+      createSupportedKeySystem().then(
+        function(createdMediaKeys) {
+          video.mediaKeysObject = createdMediaKeys;
+
+          if (serverCertificate)
+            createdMediaKeys.setServerCertificate(serverCertificate);
+
+          for (var i = 0; i < video.pendingSessionData.length; i++) {
+            var data = video.pendingSessionData[i];
+            makeNewRequest(video.mediaKeysObject, data.initDataType, data.initData);
+          }
+          video.pendingSessionData = [];
+
+          return video.setMediaKeys(createdMediaKeys);
+        }
+      ).catch(
+        console.error.bind(console, 'Failed to create and initialize a MediaKeys object')
+      );
+    }
+    addSession(video, event.initDataType, event.initData);
+  }
+
+  function addSession(video, initDataType, initData) {
+    if (video.mediaKeysObject) {
+      makeNewRequest(video.mediaKeysObject, initDataType, initData);
+    } else {
+      video.pendingSessionData.push({initDataType: initDataType, initData: initData});
+    }
+  }
+
+  function makeNewRequest(mediaKeys, initDataType, initData) {
+    var keySession = mediaKeys.createSession();
+    keySession.addEventListener("message", licenseRequestReady, false);
+    keySession.generateRequest(initDataType, initData).catch(
+      console.error.bind(console, 'Unable to create or initialize key session')
+    );
+  }
+
+  function licenseRequestReady(event) {
+    var request = event.message;
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.keySession = event.target;
+    xmlhttp.open("POST", licenseUrl);
+    xmlhttp.onreadystatechange = function() {
+      if (xmlhttp.readyState == 4) {
+        var license = new Uint8Array(xmlhttp.response);
+        xmlhttp.keySession.update(license).catch(
+          console.error.bind(console, 'update() failed')
+        );
+      }
+    }
+    xmlhttp.send(request);
+  }
+</script>
+
+<video autoplay onencrypted='handleInitData(event)'></video>
